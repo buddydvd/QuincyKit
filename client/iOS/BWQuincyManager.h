@@ -182,6 +182,9 @@ typedef enum CrashReportStatus {
   
   NSString *_languageStyle;
   BOOL _sendingInProgress;
+
+  NSString *_customBundleIdentifier;
+  NSString *_customBundleVersionSuffix;
 }
 
 + (BWQuincyManager *)sharedQuincyManager;
@@ -224,5 +227,13 @@ typedef enum CrashReportStatus {
 
 // If you want to use HockeyApp instead of your own server, this is required
 @property (nonatomic, retain) NSString *appIdentifier;
+
+// if nil, use the default bundle identifier to report to the server
+// set to another string to override the bundle identifier
+@property (nonatomic, copy) NSString *customBundleIdentifier;
+
+// if nil, use the default bundle version to report to the server
+// set to another string to specify the string include in the end of the bundle version
+@property (nonatomic, copy) NSString *customBundleVersionSuffix;
 
 @end

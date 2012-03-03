@@ -88,6 +88,8 @@ NSString *BWQuincyLocalize(NSString *stringToken) {
 @synthesize languageStyle = _languageStyle;
 @synthesize didCrashInLastSession = _didCrashInLastSession;
 @synthesize loggingEnabled = _loggingEnabled;
+@synthesize customBundleIdentifier = _customBundleIdentifier;
+@synthesize customBundleVersionSuffix = _customBundleVersionSuffix;
 
 @synthesize appIdentifier = _appIdentifier;
 
@@ -128,6 +130,8 @@ NSString *BWQuincyLocalize(NSString *stringToken) {
     _languageStyle = nil;
     _didCrashInLastSession = NO;
     _loggingEnabled = NO;
+    _customBundleIdentifier = nil;
+    _customBundleVersionSuffix = nil;
     
     self.delegate = nil;
     self.feedbackActivated = NO;
@@ -210,6 +214,12 @@ NSString *BWQuincyLocalize(NSString *stringToken) {
   [_crashesDir release];
   [_crashFiles release];
   
+  [_customBundleIdentifier release];
+  _customBundleIdentifier = nil;
+
+  [_customBundleVersionSuffix release];
+  _customBundleVersionSuffix = nil;
+
   [super dealloc];
 }
 
@@ -519,11 +529,11 @@ NSString *BWQuincyLocalize(NSString *stringToken) {
       
       [crashes appendFormat:@"<crash><applicationname>%s</applicationname><bundleidentifier>%@</bundleidentifier><systemversion>%@</systemversion><platform>%@</platform><senderversion>%@</senderversion><version>%@</version><log><![CDATA[%@]]></log><userid>%@</userid><contact>%@</contact><description><![CDATA[%@]]></description></crash>",
        [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleExecutable"] UTF8String],
-       report.applicationInfo.applicationIdentifier,
+       self.customBundleIdentifier ? self.customBundleIdentifier : report.applicationInfo.applicationIdentifier,
        report.systemInfo.operatingSystemVersion,
        [self _getDevicePlatform],
-       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"],
-       report.applicationInfo.applicationVersion,
+       [NSString stringWithFormat:@"%@%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"], self.customBundleVersionSuffix ? self.customBundleVersionSuffix : @""],
+       [NSString stringWithFormat:@"%@%@", report.applicationInfo.applicationVersion, self.customBundleVersionSuffix ? self.customBundleVersionSuffix : @""],
        [crashLogString stringByReplacingOccurrencesOfString:@"]]>" withString:@"]]" @"]]><![CDATA[" @">" options:NSLiteralSearch range:NSMakeRange(0,crashLogString.length)],
        userid,
        contact,
